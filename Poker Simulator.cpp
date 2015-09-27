@@ -103,7 +103,7 @@ int main()
 {
     cout<<"-------------------POKER SIMULATOR-------------------"<<endl<<"Welcome to the poker hand simulator, which helps you to determine a winner in a\npoker game of 2-9 players. Standard Texas Hold'em rules apply.\n\nEvery card must be entered as a string of 2 characters.\n\nThe first character denotes the value of the card.\nAce is denoted by 1, ten by t, jack by j, queen by q, king by k and the rest of\nthe numbers by their respective numerals.\n\nThe second character denotes the suit of the card.\nHeart is denoted by h, spade by s, club by c and diamond by d."<<endl<<endl;
     char a;
-    int i,j,k,cnt,fl,tmp,win;
+    int i,j,k,cnt,fl,tmp,win[9]={0},numwin,mlvl,nsplit=0,split[9]={0},tmpwin;
     cout<<"Enter the no. of players in the game ";
     c:
     cin>>nop;
@@ -258,11 +258,219 @@ int main()
         }
         end:;
     }
-    win=0;
-    for(i=1;i<nop;i++)
+    numwin=0;
+    mlvl=0;
+    j=0;
+    for(i=0;i<nop;i++)
     {
-        if(lvl[win]<lvl[i])
-        win=i;
+        if(mlvl<lvl[i])
+        {
+            mlvl=lvl[i];
+            j=0;
+            win[j]=i;
+            numwin=1;
+        }
+        else if(mlvl==lvl[i])
+        {
+            numwin++;
+            j++;
+            win[j]=i;
+        }
     }
-    cout<<"Winner is player "<<win+1<<" with "<<name[lvl[win]];
+    if(numwin==1)
+    cout<<"Winner is player "<<win[0]+1<<" with "<<name[mlvl];
+    else
+    {
+        nsplit=0;
+        if(mlvl==9)
+        {
+            nsplit=numwin;
+            for(i=0;i<nsplit;i++)
+            {
+                split[i]=win[i];
+            }
+            goto final;
+        }
+        else if(mlvl==8)
+        {
+            tmpwin=win[0];
+            for(k=0;k<4;k++)
+            {
+                fl=0;
+                for(i=0;i<13;i++)
+                {
+                    fl+=allca[tmpwin][k][i];
+                }
+                if(fl>=5)
+                break;
+            }
+            for(i=0;i<numwin;i++)
+            {
+                for(j=0;j<13;j++)
+                {
+                    if((!(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j-2]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j+1]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j+1]==1 && allca[win[i]][k][j+2]==1)) && allca[win[i]][k][j]==1)
+                    {
+                    allca[win[i]][k][j]=0;
+                    }
+                }
+            }
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                for(j=12;j>=0;j--)
+                {
+                    if(allca[tmpwin][k][j]>allca[win[i]][k][j])
+                    {
+                        break;
+                    }
+                    else if(allca[tmpwin][k][j]<allca[win[i]][k][j])
+                    {
+                        tmpwin=win[i];
+                        fl=100;
+                        break;
+                    }
+                    else if(allca[tmpwin][k][j]==1)
+                    {
+                        fl++;
+                    }
+                    if(fl==5)
+                    break;
+                }
+                if(fl==5)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==100)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
+        else if(mlvl==7)
+        {
+            tmpwin=win[0];
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                if(chknu[tmpwin][0]==4 || chknu[win[i]][0]==4)
+                {
+                    if(chknu[tmpwin][0]>chknu[win[i]][0])
+                    {
+                        goto end4;
+                    }
+                    else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto end4;
+                    }
+                    else if(chknu[tmpwin][0]==chknu[win[i]][0])
+                    {
+                        goto after4;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==chknu[win[i]][j] && chknu[tmpwin][j]==4)
+                    {
+                        goto after4;
+                    }
+                    else if(chknu[tmpwin][j]>chknu[win[i]][j] && chknu[tmpwin][j]==4)
+                    {
+                        goto end4;
+                    }
+                    else if(chknu[tmpwin][j]<chknu[win[i]][j] && chknu[win[i]][j]==4)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto end4;
+                    }
+                }
+                after4:
+                if(chknu[tmpwin][0]>0 && chknu[win[i]][0]>0 && (chknu[tmpwin][0]!=4 && chknu[win[i]][0]!=4))
+                {
+                    fl=1;
+                    goto end4;
+                }
+                else if(chknu[tmpwin][0]>0 && chknu[win[i]][0]==0 && (chknu[tmpwin][0]!=4 && chknu[win[i]][0]!=4))
+                {
+                    goto end4;
+                }
+                else if(chknu[tmpwin][0]==0 && chknu[win[i]][0]>0 && (chknu[tmpwin][0]!=4 && chknu[win[i]][0]!=4))
+                {
+                    fl=2;
+                    tmpwin=win[i];
+                    goto end4;
+                }
+                for(j=12;j>=1;j++)
+                {
+                    if(chknu[tmpwin][j]>0 && chknu[win[i]][j]>0 && (chknu[tmpwin][j]!=4 && chknu[win[i]][j]!=4))
+                    {
+                        fl=1;
+                        goto end4;
+                    }
+                    else if(chknu[tmpwin][j]>0 && chknu[win[i]][j]==0 && (chknu[tmpwin][j]!=4 && chknu[win[i]][j]!=4))
+                    {
+                        goto end4;
+                    }
+                    else if(chknu[tmpwin][j]==0 && chknu[win[i]][j]>0 && (chknu[tmpwin][j]!=4 && chknu[win[i]][j]!=4))
+                    {
+                        tmpwin=win[i];
+                        fl=2;
+                        goto end4;
+                    }
+                }
+                end4:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
+    }
+    final:
+    if(nsplit>0)
+    {
+        cout<<"The pot will be split between";
+        for(i=0;i<nsplit;i++)
+        {
+            if(i==nsplit-2)
+            cout<<" player "<<split[i]+1<<" and";
+            else if(i==nsplit-1)
+            cout<<" player "<<split[i]+1;
+            else
+            cout<<" player "<<split[i]+1<<",";
+        }
+        cout<<" as they have "<<name[mlvl];
+    }
+    else
+    {
+        cout<<"Winner is player "<<tmpwin+1<<" with "<<name[mlvl];
+    }
 }
