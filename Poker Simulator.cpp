@@ -316,7 +316,7 @@ int main()
                 {
                     if((!(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j-2]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j+1]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j+1]==1 && allca[win[i]][k][j+2]==1)) && allca[win[i]][k][j]==1)
                     {
-                    allca[win[i]][k][j]=0;
+                        allca[win[i]][k][j]=0;
                     }
                 }
             }
@@ -562,6 +562,85 @@ int main()
                 }
             }
             goto final;
+        }
+        else if(mlvl==5)
+        {
+            tmpwin=win[0];
+            for(k=0;k<4;k++)
+            {
+                fl=0;
+                for(i=0;i<13;i++)
+                {
+                    fl+=allca[tmpwin][k][i];
+                }
+                if(fl>=5)
+                break;
+            }
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                cnt=0;
+                if(allca[tmpwin][k][0]>0 || allca[win[i]][k][0]>0)
+                {
+                    if(allca[tmpwin][k][0]>allca[win[i]][k][0])
+                    {
+                        goto endfl;
+                    }
+                    else if(allca[tmpwin][k][0]<allca[win[i]][k][0])
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endfl;
+                    }
+                    else if(allca[tmpwin][k][0]==allca[win[i]][k][0])
+                    {
+                        cnt++;
+                    }
+                }
+                for(j=12;j>0;j--)
+                {
+                    if(allca[tmpwin][k][i]>allca[win[i]][k][i])
+                    {
+                        goto endfl;
+                    }
+                    else if(allca[tmpwin][k][i]<allca[win[i]][k][i])
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endfl;
+                    }
+                    else if(allca[tmpwin][k][i]==allca[win[i]][k][i] && allca[tmpwin][k][i]>0)
+                    {
+                        cnt++;
+                    }
+                    if(cnt==5)
+                    {
+                        fl==1;
+                        break;
+                    }
+                }
+                endfl:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+            }
         }
     }
     final:
