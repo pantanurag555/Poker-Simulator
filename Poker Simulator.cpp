@@ -314,7 +314,7 @@ int main()
             {
                 for(j=0;j<13;j++)
                 {
-                    if((!(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j-2]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j+1]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j+1]==1 && allca[win[i]][k][j+2]==1)) && allca[win[i]][k][j]==1)
+                    if(!(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j-2]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j-1]==1 && allca[win[i]][k][j+1]==1) && !(allca[win[i]][k][j]==1 && allca[win[i]][k][j+1]==1 && allca[win[i]][k][j+2]==1))
                     {
                         allca[win[i]][k][j]=0;
                     }
@@ -599,24 +599,24 @@ int main()
                 }
                 for(j=12;j>0;j--)
                 {
-                    if(allca[tmpwin][k][i]>allca[win[i]][k][i])
+                    if(allca[tmpwin][k][j]>allca[win[i]][k][j])
                     {
                         goto endfl;
                     }
-                    else if(allca[tmpwin][k][i]<allca[win[i]][k][i])
+                    else if(allca[tmpwin][k][j]<allca[win[i]][k][j])
                     {
                         fl=2;
                         tmpwin=win[i];
                         goto endfl;
                     }
-                    else if(allca[tmpwin][k][i]==allca[win[i]][k][i] && allca[tmpwin][k][i]>0)
+                    else if(allca[tmpwin][k][j]==allca[win[i]][k][j] && allca[tmpwin][k][j]>0)
                     {
                         cnt++;
                     }
                     if(cnt==5)
                     {
-                        fl==1;
-                        break;
+                        fl=1;
+                        goto endfl;
                     }
                 }
                 endfl:
@@ -640,7 +640,84 @@ int main()
                 }
             }
             goto final;
+        }
+        else if(mlvl==4)
+        {
+            tmpwin=win[0];
+            for(i=0;i<numwin;i++)
+            {
+                for(j=0;j<13;j++)
+                {
+                    if(!(chknu[win[i]][j]>0 && chknu[win[i]][j-1]>0 && chknu[win[i]][j-2]>0) && !(chknu[win[i]][j]>0 && chknu[win[i]][j-1]>0 && chknu[win[i]][j+1]>0) && !(chknu[win[i]][j]>0 && chknu[win[i]][j+1]>0 && chknu[win[i]][j+2]>0))
+                    {
+                        if(j==0 && chknu[win[i]][12]>0 && chknu[win[i]][11]>0)
+                        continue;
+                        else
+                        chknu[win[i]][j]=0;
+                    }
+                }
             }
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                if((chknu[tmpwin][0]>0 && chknu[tmpwin][12]>0 && chknu[tmpwin][11]>0 && chknu[tmpwin][10]>0 && chknu[tmpwin][9]>0) || (chknu[win[i]][0]>0 && chknu[win[i]][12]>0 && chknu[win[i]][11]>0 && chknu[win[i]][10]>0 && chknu[win[i]][9]>0))
+                {
+                    if(!(chknu[tmpwin][0]>0 && chknu[tmpwin][12]>0 && chknu[tmpwin][11]>0 && chknu[tmpwin][10]>0 && chknu[tmpwin][9]>0))
+                    {
+                        tmpwin=win[i];
+                        fl=100;
+                        goto endst;
+                    }
+                    else if(!(chknu[win[i]][0]>0 && chknu[win[i]][12]>0 && chknu[win[i]][11]>0 && chknu[win[i]][10]>0 && chknu[win[i]][9]>0))
+                    {
+                        goto endst;
+                    }
+                    else
+                    {
+                        fl=5;
+                        goto endst;
+                    }
+                }
+                for(j=12;j>=0;j--)
+                {
+                    if(!(chknu[win[i]][j]>0) && chknu[tmpwin][j]>0)
+                    {
+                        break;
+                    }
+                    else if(!(chknu[tmpwin][j]>0) && chknu[win[i]][j]>0)
+                    {
+                        tmpwin=win[i];
+                        fl=100;
+                        break;
+                    }
+                    else if(chknu[tmpwin][j]>0 && chknu[win[i]][j]>0)
+                    {
+                        fl++;
+                    }
+                    if(fl==5)
+                    break;
+                }
+                endst:
+                if(fl==5)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==100)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
         }
     }
     final:
