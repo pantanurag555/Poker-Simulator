@@ -103,7 +103,7 @@ int main()
 {
     cout<<"-------------------POKER SIMULATOR-------------------"<<endl<<"Welcome to the poker hand simulator, which helps you to determine a winner in a\npoker game of 2-9 players. Standard Texas Hold'em rules apply.\n\nEvery card must be entered as a string of 2 characters.\n\nThe first character denotes the value of the card.\nAce is denoted by 1, ten by t, jack by j, queen by q, king by k and the rest of\nthe numbers by their respective numerals.\n\nThe second character denotes the suit of the card.\nHeart is denoted by h, spade by s, club by c and diamond by d."<<endl<<endl;
     char a;
-    int i,j,k,cnt,fl,tmp,win[9]={0},numwin,mlvl,nsplit=0,split[9]={0},tmpwin;
+    int i,j,k,l,cnt,fl,tmp,win[9]={0},numwin,mlvl,nsplit=0,split[9]={0},tmpwin;
     cout<<"Enter the no. of players in the game ";
     c:
     cin>>nop;
@@ -804,6 +804,122 @@ int main()
                     }
                 }
                 endtk:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
+        else if(mlvl==2)
+        {
+            tmpwin=win[0];
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                cnt=0;
+                if(chknu[tmpwin][0]==2 || chknu[win[i]][0]==2)
+                {
+                    if(chknu[tmpwin][0]==chknu[win[i]][0])
+                    {
+                        k=0;
+                        cnt++;
+                    }
+                    else if(chknu[tmpwin][0]>chknu[win[i]][0])
+                    {
+                        goto endtp;
+                    }
+                    else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                    {
+                        tmpwin=win[i];
+                        fl=2;
+                        goto endtp;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==chknu[win[i]][j] && chknu[tmpwin][j]==2)
+                    {
+                        if(cnt==0)
+                        {
+                            k=j;
+                        }
+                        else if(cnt==1)
+                        {
+                            l=j;
+                        }
+                        cnt++;
+                    }
+                    else if(chknu[tmpwin][j]>chknu[win[i]][j] && chknu[tmpwin][j]==2)
+                    {
+                        goto endtp;
+                    }
+                    else if(chknu[tmpwin][j]<chknu[win[i]][j] && chknu[win[i]][j]==2)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endtp;
+                    }
+                    if(cnt==2)
+                    {
+                        goto aftertp;
+                    }
+                }
+                aftertp:
+                if((chknu[tmpwin][0]>0 || chknu[win[i]][0]>0) && k!=0)
+                {
+                    if(chknu[tmpwin][0]>0 && chknu[win[i]][0]>0)
+                    {
+                        fl=1;
+                        goto endtp;
+                    }
+                    else if(chknu[tmpwin][0]>0)
+                    {
+                        goto endtp;
+                    }
+                    else if(chknu[win[i]][0]>0)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endtp;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if((chknu[tmpwin][j]>0 || chknu[win[i]][j]>0) && k!=j && l!=j)
+                    {
+                        if(chknu[tmpwin][j]>0 && chknu[win[i]][j]>0)
+                        {
+                            fl=1;
+                            goto endtp;
+                        }
+                        else if(chknu[tmpwin][j]>0)
+                        {
+                            goto endtp;
+                        }
+                        else if(chknu[win[i]][j]>0)
+                        {
+                            fl=2;
+                            tmpwin=win[i];
+                            goto endtp;
+                        }
+                    }
+                }
+                endtp:
                 if(fl==1)
                 {
                     if(nsplit==0)
