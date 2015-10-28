@@ -529,11 +529,11 @@ int main()
                             fl=1;
                             goto endfh;
                         }
-                        else if(chknu[tmpwin][0]>chknu[win[i]][0])
+                        else if(chknu[tmpwin][j]>chknu[win[i]][j])
                         {
                             goto endfh;
                         }
-                        else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                        else if(chknu[tmpwin][j]<chknu[win[i]][j])
                         {
                             fl=2;
                             tmpwin=win[i];
@@ -719,6 +719,112 @@ int main()
             }
             goto final;
         }
+        else if(mlvl==3)
+        {
+            tmpwin=win[0];
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                if(chknu[tmpwin][0]==3 || chknu[win[i]][0]==3)
+                {
+                    if(chknu[tmpwin][0]==chknu[win[i]][0])
+                    {
+                        goto aftertk;
+                    }
+                    else if(chknu[tmpwin][0]>chknu[win[i]][0])
+                    {
+                        goto endtk;
+                    }
+                    else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                    {
+                        tmpwin=win[i];
+                        fl=2;
+                        goto endtk;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==chknu[win[i]][j] && chknu[tmpwin][j]==3)
+                    {
+                        goto aftertk;
+                    }
+                    else if(chknu[tmpwin][j]>chknu[win[i]][j] && chknu[tmpwin][j]==3)
+                    {
+                        goto endtk;
+                    }
+                    else if(chknu[tmpwin][j]<chknu[win[i]][j] && chknu[win[i]][j]==3)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endtk;
+                    }
+                }
+                aftertk:
+                cnt=0;
+                if(chknu[tmpwin][0]==1 || chknu[win[i]][0]==1)
+                {
+                    if(chknu[tmpwin][0]==1 && chknu[win[i]][0]==1)
+                    {
+                        cnt++;
+                    }
+                    else if(chknu[tmpwin][0]>chknu[win[i]][0])
+                    {
+                        goto endtk;
+                    }
+                    else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endtk;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==1 || chknu[win[i]][j]==1)
+                    {
+                        if(chknu[tmpwin][j]==1 && chknu[win[i]][j]==1)
+                        {
+                            cnt++;
+                        }
+                        else if(chknu[tmpwin][j]>chknu[win[i]][j])
+                        {
+                            goto endtk;
+                        }
+                        else if(chknu[tmpwin][j]<chknu[win[i]][j])
+                        {
+                            fl=2;
+                            tmpwin=win[i];
+                            goto endtk;
+                        }
+                    }
+                    if(cnt==2)
+                    {
+                        fl=1;
+                        goto endtk;
+                    }
+                }
+                endtk:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
     }
     final:
     if(nsplit>0)
@@ -739,5 +845,6 @@ int main()
     {
         cout<<"Winner is player "<<tmpwin+1<<" with "<<name[mlvl];
     }
-    quit:;
+    quit:
+    return 0;
 }
