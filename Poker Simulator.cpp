@@ -271,13 +271,14 @@ int main()
             mlvl=lvl[i];
             j=0;
             win[j]=i;
+            j++;
             numwin=1;
         }
         else if(mlvl==lvl[i])
         {
             numwin++;
-            j++;
             win[j]=i;
+            j++;
         }
     }
     if(numwin==1)
@@ -920,6 +921,183 @@ int main()
                     }
                 }
                 endtp:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
+        else if(mlvl==1)
+        {
+            tmpwin=win[0];
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                cnt=0;
+                if(chknu[tmpwin][0]==2 || chknu[win[i]][0]==2)
+                {
+                    if(chknu[tmpwin][0]==chknu[win[i]][0])
+                    {
+                        goto after1p;
+                    }
+                    else if(chknu[tmpwin][0]>chknu[win[i]][0])
+                    {
+                        goto end1p;
+                    }
+                    else if(chknu[tmpwin][0]<chknu[win[i]][0])
+                    {
+                        tmpwin=win[i];
+                        fl=2;
+                        goto end1p;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==chknu[win[i]][j] && chknu[tmpwin][j]==2)
+                    {
+                        goto after1p;
+                    }
+                    else if(chknu[tmpwin][j]>chknu[win[i]][j] && chknu[tmpwin][j]==2)
+                    {
+                        goto end1p;
+                    }
+                    else if(chknu[tmpwin][j]<chknu[win[i]][j] && chknu[win[i]][j]==2)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto end1p;
+                    }
+                }
+                after1p:
+                if(chknu[tmpwin][0]==1 || chknu[win[i]][0]==1)
+                {
+                    if(chknu[tmpwin][0]==chknu[win[i]][0])
+                    {
+                        cnt++;
+                    }
+                    else if(chknu[tmpwin][0]==1)
+                    {
+                        goto end1p;
+                    }
+                    else if(chknu[win[i]][0]==1)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto end1p;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]==1 || chknu[win[i]][j]==1)
+                    {
+                        if(chknu[tmpwin][j]==chknu[win[i]][j])
+                        {
+                            cnt++;
+                        }
+                        else if(chknu[tmpwin][j]==1)
+                        {
+                            goto end1p;
+                        }
+                        else if(chknu[win[i]][j]==1)
+                        {
+                            fl=2;
+                            tmpwin=win[i];
+                            goto end1p;
+                        }
+                        if(cnt==3)
+                        {
+                            fl=1;
+                            goto end1p;
+                        }
+                    }
+                }
+                end1p:
+                if(fl==1)
+                {
+                    if(nsplit==0)
+                    {
+                        nsplit=2;
+                        split[0]=tmpwin;
+                        split[1]=win[i];
+                    }
+                    else
+                    {
+                        split[nsplit]=win[i];
+                        nsplit++;
+                    }
+                }
+                else if(fl==2)
+                {
+                    nsplit=0;
+                }
+            }
+            goto final;
+        }
+        else if(mlvl==0)
+        {
+            tmpwin=win[0];
+            for(i=1;i<numwin;i++)
+            {
+                fl=0;
+                cnt=0;
+                if(chknu[tmpwin][0]>0 || chknu[win[i]][0]>0)
+                {
+                    if(chknu[tmpwin][0]>0 && chknu[win[i]][0]>0)
+                    {
+                        cnt++;
+                    }
+                    else if(chknu[tmpwin][0]>0)
+                    {
+                        goto endhc;
+                    }
+                    else if(chknu[win[i]][0]>0)
+                    {
+                        fl=2;
+                        tmpwin=win[i];
+                        goto endhc;
+                    }
+                }
+                for(j=12;j>=1;j--)
+                {
+                    if(chknu[tmpwin][j]>0 || chknu[win[i]][j]>0)
+                    {
+                        if(chknu[tmpwin][j]>0 && chknu[win[i]][j]>0)
+                        {
+                            cnt++;
+                        }
+                        else if(chknu[tmpwin][j]>0)
+                        {
+                            goto endhc;
+                        }
+                        else if(chknu[win[i]][j]>0)
+                        {
+                            fl=2;
+                            tmpwin=win[i];
+                            goto endhc;
+                        }
+                        if(cnt==5)
+                        {
+                            fl=1;
+                            goto endhc;
+                        }
+                    }
+                }
+                endhc:
                 if(fl==1)
                 {
                     if(nsplit==0)
